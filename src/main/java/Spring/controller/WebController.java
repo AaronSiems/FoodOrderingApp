@@ -1,5 +1,6 @@
 package Spring.controller;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 import Spring.Repository.CartRepository;
 import Spring.Repository.UserRepository;
@@ -21,7 +23,9 @@ import Spring.Repository.MenuDepartmentsRepository;
 import Spring.Repository.MenuItemsRepository;
 import Spring.Repository.OrderItemsRepository;
 import Spring.Repository.OrdersRepository;
+
 import Spring.beans.Cart;
+
 import Spring.beans.MenuDepartments;
 
 import Spring.beans.MenuItems;
@@ -32,6 +36,13 @@ import Spring.beans.User;
 @Controller
 @SessionAttributes("user")
 public class WebController {
+
+	  @ModelAttribute("user")
+	   public User setUpUserForm() {
+	      return new User();
+	   }
+	
+	
 	@Autowired
 	MenuDepartmentsRepository deptRepo;
 	
@@ -53,8 +64,14 @@ public class WebController {
 //****************************************************************************************************************//
 	
 	@GetMapping("/customerportal")
-	public String goToPortal() {
-		return "customerportal";
+	public String goToPortal(User user, Model model) {
+		model.addAttribute("user", user);
+		if(user.getUserAuth().equals("CUSTOMER") || user.getUserAuth().equals("ADMIN")) {
+			return "customerportal";
+		}else {
+			model.addAttribute("message", "User not authorized");
+			return "login";
+		}
 	}
 	
 	@GetMapping("../")
@@ -64,10 +81,15 @@ public class WebController {
 	
 		
 	@GetMapping("/adminportal") 
-		public String goToAdminPortal() {
+		public String goToAdminPortal(User user, Model model) {
+		model.addAttribute("user", user);
+		if(user.getUserAuth().equals("ADMIN")) {
 			return "adminPortal";
+		}else {
+			model.addAttribute("message", "User not authorized");
+			return "/login";
 		}
-	
+	}
 /********************************Menu Related Edits**********************/
 	
 	@GetMapping("/viewMenu")
@@ -86,9 +108,14 @@ public class WebController {
 /************************Order Related Edits******************************/
 	
 	@GetMapping("/viewOrders")
-	public String viewOrderList(Model model) {
+	public String viewOrderList(User user, Model model) {
 		model.addAttribute("orders", oRepo.findAll());
-		return "viewOrders";
+		model.addAttribute("user", user);
+		if(user.getUserAuth().equals("ADMIN")) {
+			return "viewOrders";
+		}else {
+			return "login";
+		}
 	}
 	
 	
@@ -128,9 +155,14 @@ public class WebController {
 /************************Admin Related Edits******************************/	
 
 	@GetMapping("/addItem")
-	public String addNewItem(@ModelAttribute MenuItems mi, Model model) {
-		menuRepo.save(mi);
-		return "adminPortal";
+	public String addNewItem(@ModelAttribute MenuItems mi, User user, Model model) {
+		model.addAttribute("user", user);
+		if(user.getUserAuth().equals("ADMIN")) {
+			menuRepo.save(mi);
+			return "adminPortal";
+		}else {
+			return "login";
+		}		
 	}
 	
 	@GetMapping("/viewMenuItems")
@@ -171,11 +203,18 @@ public class WebController {
 
 /***************************Cart Related Edits*********************************************/
 	@GetMapping("/viewCart/{id}")
-	public String viewCart(@PathVariable("id") User id, Model model) {
+	public String viewCart(@PathVariable("id") User id, User user, Model model) {
 		//Cart ca = cartRepo.findByUserId(id);
+		model.addAttribute("user", user);
 		model.addAttribute("cart", cartRepo.findByUserId(id));
-		return "viewCart";
+		if(user.getUserAuth().equals("CUSTOMER")||user.getUserAuth().equals("ADMIN")) {
+			return "viewCart";
+		}else {
+			model.addAttribute("message", "Please sign in to view your cart.");
+			return "/login";
+		}		
 	}
+	
 
 	
 	
@@ -184,34 +223,52 @@ public class WebController {
 /****************************Login Related Edits*********************************************/
 	@RequestMapping(value = "loginUser", method = RequestMethod.POST)
 	public String loginUser(@RequestParam("username") String username, @RequestParam("password") String password,
-			Model model) {
+			@ModelAttribute("user") User user, Model model) {
 
 		try {
-		User u = uRepo.findByUserName(username);		
-		model.addAttribute("user", u);	
-		if(u.getPassWord().equals(password) && u.getUserAuth().equals("ADMIN") ) {
-			
-			return "viewAdmin";
-			
-			}else if(u.getPassWord().equals(password) && u.getUserAuth().equals("CUSTOMER")){
-				
-				return "viewCustomer";		
-		}
-		else {
-		
-		return "login";
-		}
-		}
-		catch(Exception e){
 
+			User u = uRepo.findByUserName(username);
+			model.addAttribute("tempUser", u);
+
+			if (u.getPassWord().equals(password) && u.getUserAuth().equals("ADMIN")) {
+				model.addAttribute("user", user);
+				user.setFirstName(u.getFirstName());
+				user.setLastName(u.getLastName());
+				user.setVisitDate(u.getVisitDate());
+				user.setEmail(u.getEmail());
+				user.setPhoneNumber(u.getPhoneNumber());
+				user.setUserName(u.getUserName());
+				user.setUserAuth(u.getUserAuth());
+				return "viewAdmin";
+
+			} else if (u.getPassWord().equals(password) && u.getUserAuth().equals("CUSTOMER")) {
+				model.addAttribute("user", user);
+				user.setFirstName(u.getFirstName());
+				user.setLastName(u.getLastName());
+				user.setVisitDate(u.getVisitDate());
+				user.setEmail(u.getEmail());
+				user.setPhoneNumber(u.getPhoneNumber().toString());
+				user.setUserName(u.getUserName());
+				user.setUserAuth(u.getUserAuth());
+				return "viewCustomer";
+			} else {
 			return "loginError";
+			}
+		}catch (Exception e) {
+			return "/loginError";
 		}
 	}
+	
+	 @RequestMapping(value = "/logout", method = RequestMethod.GET)
+	    public String page4(@ModelAttribute User user, HttpSession session, SessionStatus status, Model model) {
+	        //uRepo.save(user);
+	        status.setComplete();
+	        session.removeAttribute("user");
+	        model.addAttribute("message", "Logged out. Thank you for visiting.");
+	        return "/login";
+	    }
 
-	  @ModelAttribute("user")
-	   public User setUpUserForm() {
-	      return new User();
-	   }
+
 	
 	/*@PostMapping("/loginUser/{username}")
 	public String showUser(@PathVariable("username") String username, Model model) {
