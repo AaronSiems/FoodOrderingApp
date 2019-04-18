@@ -26,6 +26,8 @@ public class Cart {
 	@ManyToOne(fetch=FetchType.LAZY, optional = false)
 	@JoinColumn(name="USER_ID")
 	private User userId;
+	@Column(name="request")
+	private String request;
 	
 	public Cart() {
 		super();
@@ -34,7 +36,7 @@ public class Cart {
 	
 	
 
-	public Cart(long cartId, long orderId, long prodId, String productName, int productQty, User userId) {
+	public Cart(long cartId, long orderId, long prodId, String productName, int productQty, User userId, String request) {
 		super();
 		this.cartId = cartId;
 		this.orderId = orderId;
@@ -42,6 +44,7 @@ public class Cart {
 		this.productName = productName;
 		this.productQty = productQty;
 		this.userId = userId;
+		this.request = request;
 	}
 
 
@@ -91,19 +94,22 @@ public class Cart {
 		this.prodId = prodId;
 	}
 
-
-
-
 	public User getUserId() {
 		return userId;
 	}
-
-
-
-
+	
 	public void setUserId(User userId) {
 		this.userId = userId;
 	}
+
+	public String getRequest() {
+		return request;
+	}
+
+	public void setRequest(String request) {
+		this.request = request;
+	}
+	
 
 
 	

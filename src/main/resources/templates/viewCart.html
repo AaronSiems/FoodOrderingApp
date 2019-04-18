@@ -5,22 +5,33 @@
 <title>Insert title here</title>
 </head>
 <body>
-		
-		<div class="container">
-<table>
-<thead>
-    <tr>
-        <th>Item Name: </th>
-        <th>Quantity: </th>
-    </tr>
-</thead>
-<tr th:each="currentCart : ${cart}" >
-<td th:text="${currentCart.getProductName()}" />
-<td th:text="${currentCart.getProductQty()}" />
-</tr>
-</table>
-<a href="../">Home</a><br />
-</div>
-			
+
+	<div class="container">
+	<!-- <form action="#" th:action="@{/updateCartItem/{id}(id=${cart.Id})}" th:object="${cart}" method="post"> -->
+			<table>
+				<thead>
+					<tr>
+						<th>Item Name:</th>
+						<th>Quantity:</th>
+						<th>Special request:</th>
+					</tr>
+				</thead>
+
+				<tr th:each="currentCart : ${cart}">
+
+					<td th:text="${currentCart.getProductName()}" />
+					<td th:text="${currentCart.getProductQty()}" />
+					<td><input type="text" name="request"
+						th:value="${currentCart.getRequest()}" /></td>
+
+					<td><button type="submit" name="changeCartItem">Submit
+							Changes</button></td>
+				</tr>
+
+			</table>
+		 
+		<a href="../">Home</a><br />
+	</div>
+
 </body>
 </html>

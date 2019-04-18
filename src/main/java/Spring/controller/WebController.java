@@ -204,7 +204,6 @@ public class WebController {
 /***************************Cart Related Edits*********************************************/
 	@GetMapping("/viewCart/{id}")
 	public String viewCart(@PathVariable("id") User id, User user, Model model) {
-		//Cart ca = cartRepo.findByUserId(id);
 		model.addAttribute("user", user);
 		model.addAttribute("cart", cartRepo.findByUserId(id));
 		if(user.getUserAuth().equals("CUSTOMER")||user.getUserAuth().equals("ADMIN")) {
@@ -215,7 +214,15 @@ public class WebController {
 		}		
 	}
 	
-
+	/*
+	@PostMapping("/updateCartItem/{id}")
+	public String updateCartItem(@PathVariable("id") long id, @Valid Cart c, BindingResult result, Model model) {
+		cartRepo.save(c);
+		
+		
+		return "viewCart";
+	}
+	*/
 	
 	
 	

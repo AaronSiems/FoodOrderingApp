@@ -29,10 +29,11 @@ CREATE TABLE `customer_cart` (
   `PROD_NAME` varchar(20) NOT NULL,
   `PROD_QTY` int(2) NOT NULL,
   `USER_ID` int(11) NOT NULL,
+  `REQUEST` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`CART_ID`),
   KEY `CART_IDFK` (`USER_ID`),
   KEY `PROD_IDFK` (`PROD_ID`),
-  CONSTRAINT `CART_IDFK` FOREIGN KEY (`USER_ID`) REFERENCES `user` (`user_id`),
+  CONSTRAINT `CART_IDFK` FOREIGN KEY (`USER_ID`) REFERENCES `user` (`USER_ID`),
   CONSTRAINT `PROD_IDFK` FOREIGN KEY (`PROD_ID`) REFERENCES `order_items` (`item_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -43,7 +44,7 @@ CREATE TABLE `customer_cart` (
 
 LOCK TABLES `customer_cart` WRITE;
 /*!40000 ALTER TABLE `customer_cart` DISABLE KEYS */;
-INSERT INTO `customer_cart` VALUES (1,1,1,'Nachos',1,2);
+INSERT INTO `customer_cart` VALUES (1,1,1,'Nachos',1,2,'Extra cheese');
 /*!40000 ALTER TABLE `customer_cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -88,7 +89,7 @@ CREATE TABLE `menu_items` (
   PRIMARY KEY (`ITEM_ID`),
   KEY `department` (`DEPARTMENT`),
   CONSTRAINT `menu_items_ibfk_1` FOREIGN KEY (`DEPARTMENT`) REFERENCES `menu_departments` (`department_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +98,7 @@ CREATE TABLE `menu_items` (
 
 LOCK TABLES `menu_items` WRITE;
 /*!40000 ALTER TABLE `menu_items` DISABLE KEYS */;
-INSERT INTO `menu_items` VALUES (1,'Nachos',3,NULL,'Nacho chips with nacho cheese',1),(2,'Pickle',1,'','One big pickle',1);
+INSERT INTO `menu_items` VALUES (1,'Nachos',3,NULL,'Nacho chips with nacho cheese',1),(2,'Pickle',1,'','One big pickle',1),(3,'Shrimp',5,'','7 Shrimps',2);
 /*!40000 ALTER TABLE `menu_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,7 +119,7 @@ CREATE TABLE `order_items` (
   KEY `ITEM_ID_FK` (`ITEM_ID`),
   CONSTRAINT `ITEM_ID_FK` FOREIGN KEY (`ITEM_ID`) REFERENCES `menu_items` (`ITEM_ID`),
   CONSTRAINT `order_items_orders_fk` FOREIGN KEY (`ORDER_ID`) REFERENCES `orders` (`ORDER_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,7 +128,7 @@ CREATE TABLE `order_items` (
 
 LOCK TABLES `order_items` WRITE;
 /*!40000 ALTER TABLE `order_items` DISABLE KEYS */;
-INSERT INTO `order_items` VALUES (5,1,1,1),(6,1,1,1);
+INSERT INTO `order_items` VALUES (5,1,1,1),(6,1,1,1),(7,1,1,1),(8,1,1,1),(9,1,2,1),(10,1,2,1);
 /*!40000 ALTER TABLE `order_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,4 +198,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-16  2:30:16
+-- Dump completed on 2019-04-17 20:39:49
