@@ -9,6 +9,6 @@ import Spring.beans.Orders;
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, Long>{
 
-
+	public Orders findByOrderId(long l);
 	
 }

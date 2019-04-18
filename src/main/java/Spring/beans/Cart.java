@@ -36,6 +36,18 @@ public class Cart {
 	
 	
 
+	public Cart(long orderId, long prodId, String productName, int productQty, User userId) {
+		super();
+		this.orderId = orderId;
+		this.prodId = prodId;
+		this.productName = productName;
+		this.productQty = productQty;
+		this.userId = userId;
+	}
+
+
+
+
 	public Cart(long cartId, long orderId, long prodId, String productName, int productQty, User userId, String request) {
 		super();
 		this.cartId = cartId;

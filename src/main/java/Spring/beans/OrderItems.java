@@ -12,9 +12,9 @@ public class OrderItems {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	@Column(name = "ORDER_ID")
-	private int orderId;
+	private long orderId;
 	@Column(name = "ITEM_ID")
-	private int itemId;
+	private long itemId;
 	@Column(name = "QUANTITY")
 	private int quantity;
 
@@ -53,7 +53,7 @@ public class OrderItems {
 		this.id = id;
 	}
 
-	public int getOrderId() {
+	public long getOrderId() {
 		return orderId;
 	}
 
@@ -61,7 +61,7 @@ public class OrderItems {
 		this.orderId = orderId;
 	}
 
-	public int getItemId() {
+	public long getItemId() {
 		return itemId;
 	}
 

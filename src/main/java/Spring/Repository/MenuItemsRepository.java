@@ -12,4 +12,5 @@ import Spring.beans.MenuItems;
 public interface MenuItemsRepository extends JpaRepository<MenuItems, Long>{
 	
 	public List<MenuItems> findByItemDepartment(MenuDepartments id);
+	public MenuItems findByItemId(long l);
 }

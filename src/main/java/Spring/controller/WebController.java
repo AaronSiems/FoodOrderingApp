@@ -127,6 +127,12 @@ public class WebController {
 		oi.setOrderId(1); //Placeholder until we have login functionality
 						  //Must have an order in database to work
 		oiRepo.save(oi);
+		
+		MenuItems mi = menuRepo.findByItemId(oi.getItemId()); //find menu items with matching itemid from order
+		Orders o = oRepo.findByOrderId(oi.getOrderId()); //find order with matching order id from this call
+		User u = uRepo.findByUserId(o.getCustomerId()); //find user with matching user id
+		Cart c = new Cart(oi.getId(), oi.getItemId(), mi.getItemName(), oi.getQuantity(), u); //create a cart from all those
+		cartRepo.save(c); //added to cart
 		return "customerportal";
 	}
 	
@@ -142,7 +148,7 @@ public class WebController {
 	@PostMapping("/updateOrder/{id}")
 	public String updateOrders(@PathVariable("id") long id, @Valid Orders o, BindingResult result, Model model) {
 		if(result.hasErrors()) {
-			o.setId(id);;
+			o.setId(id);
 			return "updateOrder";
 		}
 		
@@ -214,15 +220,16 @@ public class WebController {
 		}		
 	}
 	
-	/*
-	@PostMapping("/updateCartItem/{id}")
-	public String updateCartItem(@PathVariable("id") long id, @Valid Cart c, BindingResult result, Model model) {
+	
+	@PostMapping("/updateCartItem")
+	public String updateCartItem(@Valid Cart c, BindingResult result, Model model) {
+		
 		cartRepo.save(c);
 		
 		
 		return "viewCart";
 	}
-	*/
+	
 	
 	
 	
